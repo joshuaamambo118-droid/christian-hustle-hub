@@ -7,7 +7,7 @@ export function VerseCarousel() {
     const t = setInterval(() => setI((x) => (x + 1) % BIBLE_VERSES.length), 6000);
     return () => clearInterval(t);
   }, []);
-  const v = BIBLE_VERSES[i];
+  const v = BIBLE_VERSES[i]!;
   return (
     <div className="card-surface">
       <p className="text-xs uppercase tracking-widest text-primary">Word for today · {i + 1}/12</p>

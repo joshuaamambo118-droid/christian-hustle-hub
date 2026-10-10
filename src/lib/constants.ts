@@ -1,7 +1,7 @@
 export const ADMIN_EMAIL = "admin@christianhustlespace.com";
 export const NGN_RATE = 1600;
 export const HCAPTCHA_SITEKEY =
-  (import.meta.env.VITE_HCAPTCHA_SITEKEY as string | undefined) ?? "72fc5a0c-5552-4e34-bd98-dce28f7cbd84";
+  (import.meta.env["VITE_HCAPTCHA_SITEKEY"] as string | undefined) ?? "72fc5a0c-5552-4e34-bd98-dce28f7cbd84";
 
 export const BIBLE_VERSES = [
   { ref: "Philippians 4:13", text: "I can do all things through Christ who strengthens me." },

@@ -10,7 +10,7 @@ import { Toast, useMsg } from "@/components/Shell";
 import { injectSocialBar } from "@/lib/ads";
 
 export const Route = createFileRoute("/")({
-  validateSearch: (s: Record<string, unknown>) => ({ ref: typeof s.ref === "string" ? s.ref : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ ref: typeof s["ref"] === "string" ? (s["ref"] as string) : undefined } as { ref?: string }),
   head: () => ({
     meta: [
       { title: "Christian Hustle Space — Work with all your heart" },
@@ -48,7 +48,7 @@ function Landing() {
     e.preventDefault();
     m.clear();
     const p = schema.safeParse(form);
-    if (!p.success) return m.err(p.error.issues[0].message);
+    if (!p.success) return m.err(p.error.issues[0]?.message ?? "Invalid input");
     if (!token) return m.err("Please complete the captcha.");
     setBusy(true);
     const { error } =
