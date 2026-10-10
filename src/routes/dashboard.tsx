@@ -5,6 +5,7 @@ import { AffiliateBanner, VerseCarousel } from "@/components/Widgets";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { PLANS, REWARD_LINKS } from "@/lib/constants";
+import NewUserOnboarding from "@/components/onboarding/NewUserOnboarding";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -27,6 +28,7 @@ function Dashboard() {
   const [rewardClicked, setRewardClicked] = useState(false);
   const [canClaim, setCanClaim] = useState(false);
   const [linkIdx, setLinkIdx] = useState(0);
+  const [skipped, setSkipped] = useState(false);
   const m = useMsg();
 
   useEffect(() => {
@@ -56,6 +58,9 @@ function Dashboard() {
 
   return (
     <div className="space-y-5">
+      {profile.onboarding_completed === false && !skipped && (
+        <NewUserOnboarding onComplete={() => refresh()} onSkip={() => setSkipped(true)} />
+      )}
       <div className="card-surface">
         <p className="text-sm text-muted-foreground">Balance</p>
         <p className="font-display text-4xl font-semibold text-gold">${Number(profile.balance).toFixed(4)}</p>
