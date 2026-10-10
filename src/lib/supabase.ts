@@ -29,4 +29,5 @@ export type Profile = {
   is_admin: boolean;
   referred_by: string | null;
   total_tasks: number;
+  onboarding_completed?: boolean | null;
 };

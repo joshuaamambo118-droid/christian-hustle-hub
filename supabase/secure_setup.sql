@@ -149,3 +149,26 @@ revoke execute on function public.complete_task(boolean), public.request_withdra
   public.ensure_daily_reset(), public.admin_review_vip(uuid,boolean), public.admin_review_withdrawal(uuid,boolean) from public, anon;
 grant execute on function public.complete_task(boolean), public.request_withdrawal(numeric,text,text),
   public.ensure_daily_reset(), public.admin_review_vip(uuid,boolean), public.admin_review_withdrawal(uuid,boolean) to authenticated;
+
+-- ===== Onboarding (run this block too) =====
+alter table profiles add column if not exists income_goal text;
+alter table profiles add column if not exists commitment_level text;
+alter table profiles add column if not exists will_recommend boolean;
+alter table profiles add column if not exists onboarding_completed boolean default false;
+alter table profiles add column if not exists onboarding_completed_at timestamp;
+
+-- Users can only save their own onboarding answers (never balance/VIP)
+create or replace function public.save_onboarding(p_income_goal text, p_commitment text, p_will_recommend boolean, p_completed boolean) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  update profiles set
+    income_goal = coalesce(left(p_income_goal, 60), income_goal),
+    commitment_level = coalesce(left(p_commitment, 30), commitment_level),
+    will_recommend = coalesce(p_will_recommend, will_recommend),
+    onboarding_completed = case when p_completed then true else onboarding_completed end,
+    onboarding_completed_at = case when p_completed then now() else onboarding_completed_at end
+  where id = auth.uid();
+end $$;
+revoke execute on function public.save_onboarding(text,text,boolean,boolean) from public, anon;
+grant execute on function public.save_onboarding(text,text,boolean,boolean) to authenticated;
